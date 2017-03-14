@@ -1,0 +1,5 @@
+# Needed for tests
+
+Django==1.5.10
+django-discover-runner==1.0
+mock==2.0.0

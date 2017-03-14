@@ -22,10 +22,6 @@ class DatabaseWrapper(DatabaseWrapper):
     def __init__(self, *args, **kwargs):
         super(DatabaseWrapper, self).__init__(*args, **kwargs)
         self.ops = DatabaseOperations(self)
-        self.operators.update(
-            {
-                'array_contains': '@> %s',
-                'array_contained': '<@ %s',
-                'array_overlaps': '&& %s',
-            }
-        )
+        self.operators.update({'contains': '@> %s',
+                               'contained': '<@ %s',
+                               'overlaps': '&& %s'})

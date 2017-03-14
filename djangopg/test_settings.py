@@ -13,3 +13,5 @@ DATABASES = {
         'NAME': ':memory:',
     }
 }
+
+SECRET_KEY = "secretdjangopgextensionskey"
