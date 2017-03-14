@@ -24,7 +24,8 @@ class OperatorsTestCase(unittest.TestCase):
 
     def test_invalid_operator_raises_type_error(self):
         f = ArrayField()
-        self.assertRaises(TypeError, f.get_prep_lookup, 'contains', 'str')
+        self.assertRaises(TypeError, f.get_prep_lookup, 'array_contains',
+                          'str')
 
     def test_valid_operators_return_value(self):
         value = [1, 2, 3, ]
