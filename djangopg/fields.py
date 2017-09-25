@@ -4,6 +4,17 @@ from django.db import models
 from django.utils.encoding import smart_unicode
 
 
+class ArrayContains(models.Lookup):
+    lookup_name = 'array_contains'
+
+    def as_sql(self, compiler, connection):
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        params = lhs_params
+        return '%s @> ARRAY%s' % (
+            lhs, [i.encode("utf8") for i in self.rhs]
+        ), params
+
+
 class ArrayField(models.Field):
     """Base class for fields of type array."""
 

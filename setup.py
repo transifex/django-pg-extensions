@@ -9,6 +9,6 @@ setup(
     author="Apostolos Bessas",
     author_email="mpessas@gmail.com",
     packages=["djangopg", "djangopg.postgresql_psycopg2", ],
-    install_requires=["Django", ],
+    install_requires=["Django==1.7.11", ],
     tests_require=["django-discover-runner", "mock", ]
 )
