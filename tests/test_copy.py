@@ -10,7 +10,7 @@ import csv
 from StringIO import StringIO
 from mock import patch
 from djangopg.copy import _convert_to_csv_form, copy_insert
-from tests.data import Poll, Choice
+from tests.data import Article, Choice, Poll
 
 
 class DataConversionTestCase(unittest.TestCase):
@@ -85,6 +85,50 @@ class ColumnsTestCase(unittest.TestCase):
         self.assertEqual(columns[0], 'question')
         self.assertEqual(columns[1], 'pub_date')
 
+
+@patch('djangopg.copy._convert_to_csv_form')
+@patch('djangopg.copy._send_csv_to_postgres')
+class PreSaveTestCase(unittest.TestCase):
+    """Tests the pre-save option of copy_insert().
+
+    If `pre_save=True`, we expect the `pre_save()` method of each field
+    to be executed before invoking COPY. If the field has special pre-save
+    handling, like `auto_now` for DateTime fields, the value that gets sent
+    to the database will be modified first.
+
+    If `pre_save=False`, we expect the value will stay as is.
+    """
+
+    def setUp(self):
+        # Define a custom value for the `created` field
+        # This field has `auto_now_add=True`, so if `pre_save()` is called
+        # on it, the value sent to the database will automatically be
+        # updated to the current now().
+        self.datetime = datetime(year=2018, month=06, day=19)
+        self.entries = [
+            Article(title="My best article", created=self.datetime),
+            Article(title="My second best article", created=self.datetime),
+        ]
+
+    def test_pre_save_not_called(self, mock_send_csv, mock_convert):
+        """Make sure that pre_save() is not called if the option is false."""
+        copy_insert(Article, self.entries, pre_save=False)
+        self.assertEqual(mock_convert.call_args[0][0], self._datestr)
+
+    def test_pre_save_called(self, mock_send_csv, mock_convert):
+        """Make sure that pre_save() is called if the option is true
+        or not specified.
+        """
+        copy_insert(Article, self.entries, pre_save=True)
+        self.assertNotEqual(mock_convert.call_args[0][0], self._datestr)
+
+        copy_insert(Article, self.entries)
+        self.assertNotEqual(mock_convert.call_args[0][0], self._datestr)
+
+    @property
+    def _datestr(self):
+        # Should return "2018-06-19 00:00:00"
+        return self.datetime.strftime("%Y-%m-%d %H:%M:%S")
 
 @patch('djangopg.copy._send_csv_to_postgres')
 class CsvTestCase(unittest.TestCase):

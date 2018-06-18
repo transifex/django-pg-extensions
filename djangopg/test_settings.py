@@ -13,3 +13,5 @@ DATABASES = {
         'NAME': ':memory:',
     }
 }
+
+SECRET_KEY = 'hsdfgkdsjahfgasd0fasadofsdhkj-dfadsjajhsdg3g4jhjkshf34'
