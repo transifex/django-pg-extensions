@@ -21,6 +21,6 @@ Python 2.6 or greater is required.
 
 Just run
 
-    django-admin.py test --settings=djangopg.test_settings
+    DJANGO_SETTINGS_MODULE=djangopg.test_settings python setup.py test
 
 from the root directory.
